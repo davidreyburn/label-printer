@@ -10,18 +10,20 @@
   <link rel="manifest" href="./manifest.json">
   <style>
     :root {
-      --bg:      #0d0d0d;
-      --surface: #1a1a1a;
-      --border:  #2d2d2d;
-      --text:    #d0d0d0;
-      --dim:     #666;
-      --green:   #39ff14;
+      --bg:         #0d0d0d;
+      --surface:    #1a1a1a;
+      --border:     #2d2d2d;
+      --text:       #d0d0d0;
+      --dim:        #666;
+      --green:      #39ff14;
       --green-glow: rgba(57, 255, 20, 0.12);
-      --red:     #ff4444;
-      --font:    'Consolas', 'Courier New', monospace;
+      --red:        #ff4444;
+      --font:       'Consolas', 'Courier New', monospace;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body { height: 100%; }
 
     body {
       background: var(--bg);
@@ -31,16 +33,13 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 32px 20px 40px;
-      gap: 28px;
+      padding: 24px 20px 32px;
+      gap: 20px;
     }
 
     header {
       width: 100%;
-      max-width: 480px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
+      max-width: 600px;
     }
 
     header h1 {
@@ -55,15 +54,49 @@
       opacity: 0.6;
     }
 
+    /* --- Layout: stacked on narrow, side-by-side on wide --- */
+
+    .layout {
+      width: 100%;
+      max-width: 960px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      flex: 1;
+    }
+
+    @media (min-width: 640px) {
+      body { padding: 32px 32px 40px; gap: 24px; }
+
+      .layout {
+        flex-direction: row;
+        align-items: stretch;
+        gap: 32px;
+      }
+
+      .preview-col {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .controls-col {
+        flex: 0 0 280px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        justify-content: center;
+      }
+    }
+
     /* Preview */
     .preview-wrap {
       width: 100%;
-      max-width: 480px;
       background: #fff;
       border-radius: 4px;
       box-shadow: 0 0 0 1px var(--border), 0 0 24px rgba(0,0,0,0.6);
       overflow: hidden;
-      /* tape notch effect */
       position: relative;
     }
 
@@ -76,10 +109,9 @@
       width: 10px;
       height: 28px;
       background: var(--bg);
-      border-radius: 0 4px 4px 0;
       z-index: 1;
     }
-    .preview-wrap::before { left: 0; border-radius: 0 4px 4px 0; }
+    .preview-wrap::before { left: 0;  border-radius: 0 4px 4px 0; }
     .preview-wrap::after  { right: 0; border-radius: 4px 0 0 4px; }
 
     #preview {
@@ -89,10 +121,11 @@
       image-rendering: pixelated;
     }
 
-    /* Input */
-    .input-wrap {
-      width: 100%;
-      max-width: 480px;
+    /* Controls */
+    .controls-col {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
     }
 
     textarea {
@@ -108,6 +141,8 @@
       outline: none;
       line-height: 1.5;
       transition: border-color 0.15s;
+      flex: 1;
+      min-height: 80px;
     }
 
     textarea:focus {
@@ -127,7 +162,6 @@
     /* Button */
     button#print-btn {
       width: 100%;
-      max-width: 480px;
       background: var(--green);
       color: #000;
       font-family: var(--font);
@@ -142,8 +176,8 @@
       box-shadow: 0 0 16px rgba(57, 255, 20, 0.3);
     }
 
-    button#print-btn:hover  { box-shadow: 0 0 24px rgba(57, 255, 20, 0.5); }
-    button#print-btn:active { opacity: 0.85; }
+    button#print-btn:hover   { box-shadow: 0 0 24px rgba(57, 255, 20, 0.5); }
+    button#print-btn:active  { opacity: 0.85; }
     button#print-btn:disabled {
       opacity: 0.4;
       cursor: not-allowed;
@@ -166,18 +200,22 @@
     <h1>D30 Label Maker</h1>
   </header>
 
-  <div class="preview-wrap">
-    <canvas id="preview" width="320" height="96"></canvas>
+  <div class="layout">
+    <div class="preview-col">
+      <div class="preview-wrap">
+        <canvas id="preview" width="320" height="96"></canvas>
+      </div>
+    </div>
+
+    <div class="controls-col">
+      <div>
+        <textarea id="text-input" rows="3" placeholder="Type label text…" autocorrect="off" autocapitalize="off" spellcheck="false"></textarea>
+        <p class="hint">Shift+Enter for a new line &nbsp;·&nbsp; Enter to print</p>
+      </div>
+      <button id="print-btn">⬛&nbsp; PRINT</button>
+      <div id="status"></div>
+    </div>
   </div>
-
-  <div class="input-wrap">
-    <textarea id="text-input" rows="2" placeholder="Type label text…" autocorrect="off" autocapitalize="off" spellcheck="false"></textarea>
-    <p class="hint">Shift+Enter for a new line &nbsp;·&nbsp; Enter to print</p>
-  </div>
-
-  <button id="print-btn">⬛&nbsp; PRINT</button>
-
-  <div id="status"></div>
 
   <script src="./app.js"></script>
 </body>
