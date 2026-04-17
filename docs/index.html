@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#0d0d0d">
+  <title>D30 Labels</title>
+  <link rel="manifest" href="./manifest.json">
+  <style>
+    :root {
+      --bg:      #0d0d0d;
+      --surface: #1a1a1a;
+      --border:  #2d2d2d;
+      --text:    #d0d0d0;
+      --dim:     #666;
+      --green:   #39ff14;
+      --green-glow: rgba(57, 255, 20, 0.12);
+      --red:     #ff4444;
+      --font:    'Consolas', 'Courier New', monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 32px 20px 40px;
+      gap: 28px;
+    }
+
+    header {
+      width: 100%;
+      max-width: 480px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    header h1 {
+      font-size: 13px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--green);
+    }
+
+    header h1::before {
+      content: '▶ ';
+      opacity: 0.6;
+    }
+
+    /* Preview */
+    .preview-wrap {
+      width: 100%;
+      max-width: 480px;
+      background: #fff;
+      border-radius: 4px;
+      box-shadow: 0 0 0 1px var(--border), 0 0 24px rgba(0,0,0,0.6);
+      overflow: hidden;
+      /* tape notch effect */
+      position: relative;
+    }
+
+    .preview-wrap::before,
+    .preview-wrap::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 10px;
+      height: 28px;
+      background: var(--bg);
+      border-radius: 0 4px 4px 0;
+      z-index: 1;
+    }
+    .preview-wrap::before { left: 0; border-radius: 0 4px 4px 0; }
+    .preview-wrap::after  { right: 0; border-radius: 4px 0 0 4px; }
+
+    #preview {
+      width: 100%;
+      height: auto;
+      display: block;
+      image-rendering: pixelated;
+    }
+
+    /* Input */
+    .input-wrap {
+      width: 100%;
+      max-width: 480px;
+    }
+
+    textarea {
+      width: 100%;
+      background: var(--surface);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 18px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 14px 16px;
+      resize: none;
+      outline: none;
+      line-height: 1.5;
+      transition: border-color 0.15s;
+    }
+
+    textarea:focus {
+      border-color: var(--green);
+      box-shadow: 0 0 0 1px var(--green-glow), inset 0 0 0 1px var(--green-glow);
+    }
+
+    textarea::placeholder { color: var(--dim); }
+
+    .hint {
+      margin-top: 6px;
+      font-size: 11px;
+      color: var(--dim);
+      letter-spacing: 0.05em;
+    }
+
+    /* Button */
+    button#print-btn {
+      width: 100%;
+      max-width: 480px;
+      background: var(--green);
+      color: #000;
+      font-family: var(--font);
+      font-size: 14px;
+      font-weight: bold;
+      letter-spacing: 0.2em;
+      border: none;
+      border-radius: 4px;
+      padding: 16px;
+      cursor: pointer;
+      transition: opacity 0.15s, box-shadow 0.15s;
+      box-shadow: 0 0 16px rgba(57, 255, 20, 0.3);
+    }
+
+    button#print-btn:hover  { box-shadow: 0 0 24px rgba(57, 255, 20, 0.5); }
+    button#print-btn:active { opacity: 0.85; }
+    button#print-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    /* Status */
+    #status {
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      min-height: 18px;
+      color: var(--dim);
+    }
+    #status.ok  { color: var(--green); }
+    #status.err { color: var(--red); }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>D30 Label Maker</h1>
+  </header>
+
+  <div class="preview-wrap">
+    <canvas id="preview" width="320" height="96"></canvas>
+  </div>
+
+  <div class="input-wrap">
+    <textarea id="text-input" rows="2" placeholder="Type label text…" autocorrect="off" autocapitalize="off" spellcheck="false"></textarea>
+    <p class="hint">Shift+Enter for a new line &nbsp;·&nbsp; Enter to print</p>
+  </div>
+
+  <button id="print-btn">⬛&nbsp; PRINT</button>
+
+  <div id="status"></div>
+
+  <script src="./app.js"></script>
+</body>
+</html>
